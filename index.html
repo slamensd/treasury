@@ -1,20 +1,18 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <title>Staking DApp</title>
-        <link rel="stylesheet" href="styles.css">
-    </head>
-    <body>
-        <div id="app">
-            <button id="connectButton">Connect Wallet</button>
-            <div id="stakeSection" class="hidden">
-                <h2>Stake Your NFTs</h2>
-                <div id="tokenList"></div>
-                <button id="stakeButton">Stake Selected NFTs</button>
-                <button id="unstakeButton">Unstake Treasury Token</button>
-            </div>
-        </div>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
-        <script src="main.js"></script>
-    </body>
+<html lang="en">
+<head>
+    <title>NFT Staking DApp</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
+</head>
+<body>
+    <div class="app">
+        <h1>NFT Staking DApp</h1>
+        <button id="connect-button">Connect Wallet</button>
+        <p id="wallet-address"></p>
+        <p id="nft-balance"></p>
+        <button id="stake-button" disabled>Stake 5 Tokens</button>
+    </div>
+    <script src="main.js"></script>
+</body>
 </html>

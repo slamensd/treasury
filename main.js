@@ -1,4 +1,4 @@
-onst provider = new ethers.providers.Web3Provider(window.ethereum);
+const provider = new ethers.providers.Web3Provider(window.ethereum);
 let signer;
 let nftTokenContract;
 let stakingContract;

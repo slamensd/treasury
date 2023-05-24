@@ -1,23 +1,24 @@
+const nftTokenAddress = "0xdf9669A65c5845E472ad3Ca83d07605a9d7701b7";
+const stakingAddress = "0xYourStakingContractAddressHere";
+const treasuryAddress = "0x232765BE70A5f0b49e2d72EEE9765813894C1Fc4";
+const nftTokenAbi = [...]; // the ABI of your ERC-721 token
+const stakingAbi = [...]; // the ABI of your Staking contract
+
 async function loadBalance() {
     try {
-        const account = await ethereum.selectedAddress;
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const signer = provider.getSigner();
-
         const nftTokenContract = new ethers.Contract(nftTokenAddress, nftTokenAbi, signer);
-        const balance = await nftTokenContract.balanceOf(account);
-        document.getElementById('nft-balance').innerText = `You own ${balance} NFTs`;
+        const account = await signer.getAddress();
 
-        // enable the stake button if the user owns at least 5 NFTs
-        const stakeButton = document.getElementById('stake-button');
-        if (balance.toNumber() >= 5) {
-            stakeButton.disabled = false;
-            stakeButton.addEventListener('click', stakeTokens);
-        } else {
-            stakeButton.disabled = true;
-        }
+        // Get balance
+        const balance = await nftTokenContract.balanceOf(account);
+        document.getElementById('nft-balance').innerText = `Balance: ${balance}`;
+
+        // Enable or disable the staking button based on the balance
+        document.getElementById('stake-button').disabled = balance < 5;
     } catch (error) {
-        console.error('Error in token loading: ', error);
+        console.error('Error in balance loading: ', error);
     }
 }
 
@@ -26,20 +27,32 @@ async function stakeTokens() {
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const signer = provider.getSigner();
         const stakingContract = new ethers.Contract(stakingAddress, stakingAbi, signer);
-        
-        // Approve staking contract to transfer 5 NFTs
-        const nftTokenContract = new ethers.Contract(nftTokenAddress, nftTokenAbi, signer);
-        const approveTx = await nftTokenContract.setApprovalForAll(stakingAddress, true);
-        await approveTx.wait();
 
         // Call the stake function
-        const stakeTx = await stakingContract.stake(5);
+        const stakeTx = await stakingContract.stake();
         await stakeTx.wait();
 
         // Refresh balance
         loadBalance();
     } catch (error) {
         console.error('Error in staking: ', error);
+    }
+}
+
+async function unstakeTokens() {
+    try {
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = provider.getSigner();
+        const stakingContract = new ethers.Contract(stakingAddress, stakingAbi, signer);
+
+        // Call the unstake function
+        const unstakeTx = await stakingContract.unstake();
+        await unstakeTx.wait();
+
+        // Refresh balance
+        loadBalance();
+    } catch (error) {
+        console.error('Error in unstaking: ', error);
     }
 }
 
@@ -57,3 +70,6 @@ document.getElementById('connect-button').addEventListener('click', async () => 
         alert('Please install MetaMask!');
     }
 });
+
+document.getElementById('stake-button').addEventListener('click', stakeTokens);
+document.getElementById('unstake-button').addEventListener('click', unstakeTokens);

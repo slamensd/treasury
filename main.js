@@ -61,20 +61,28 @@ async function loadBalance() {
 
 async function stakeTokens() {
     try {
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        const signer = provider.getSigner();
-        const stakingContract = new ethers.Contract(stakingAddress, stakingAbi, signer);
+        const stakingContract = new ethers.Contract(stakingContractAddress, stakingContractABI, signer);
 
-        // Call the stake function
-        const stakeTx = await stakingContract.stake();
-        await stakeTx.wait();
+        // Fetch the number of tokens the user wants to stake.
+        let amountToStake = 5;  // Assuming the user always stakes 5 tokens. You may want to replace this with a user input.
 
-        // Refresh balance
-        loadBalance();
+        // Pass the amount to stake as an argument to the stake() function.
+        const tx = await stakingContract.stake(amountToStake);
+
+        console.log("Staking transaction:", tx);
+        alert("Staking initiated. Check console for transaction details.");
+
+        // Wait for the transaction to be mined.
+        const receipt = await tx.wait();
+        console.log("Transaction receipt:", receipt);
+        alert("Staking confirmed. Check console for transaction receipt.");
+
     } catch (error) {
-        console.error('Error in staking: ', error);
+        console.error("Error in staking: ", error);
+        alert("Error in staking. See console for details.");
     }
 }
+
 
 async function unstakeTokens() {
     try {
